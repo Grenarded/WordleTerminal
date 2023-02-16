@@ -1,0 +1,6 @@
+/Users/benpetlach/Desktop/School/ICS4/Assignments/PASS1/PetlachBPASS1/PetlachBPASS1/bin/Debug/PetlachBPASS1.exe
+/Users/benpetlach/Desktop/School/ICS4/Assignments/PASS1/PetlachBPASS1/PetlachBPASS1/bin/Debug/PetlachBPASS1.pdb
+/Users/benpetlach/Desktop/School/ICS4/Assignments/PASS1/PetlachBPASS1/PetlachBPASS1/obj/Debug/PetlachBPASS1.csproj.AssemblyReference.cache
+/Users/benpetlach/Desktop/School/ICS4/Assignments/PASS1/PetlachBPASS1/PetlachBPASS1/obj/Debug/PetlachBPASS1.csproj.CoreCompileInputs.cache
+/Users/benpetlach/Desktop/School/ICS4/Assignments/PASS1/PetlachBPASS1/PetlachBPASS1/obj/Debug/PetlachBPASS1.exe
+/Users/benpetlach/Desktop/School/ICS4/Assignments/PASS1/PetlachBPASS1/PetlachBPASS1/obj/Debug/PetlachBPASS1.pdb

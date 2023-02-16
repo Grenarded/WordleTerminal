@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.810.21
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PetlachBPASS1", "PetlachBPASS1\PetlachBPASS1.csproj", "{1B97C3C1-0D13-4239-9C58-9D58F76EB6EC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|anycpu = Debug|anycpu
+		Release|anycpu = Release|anycpu
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1B97C3C1-0D13-4239-9C58-9D58F76EB6EC}.Debug|anycpu.ActiveCfg = Debug|anycpu
+		{1B97C3C1-0D13-4239-9C58-9D58F76EB6EC}.Debug|anycpu.Build.0 = Debug|anycpu
+		{1B97C3C1-0D13-4239-9C58-9D58F76EB6EC}.Release|anycpu.ActiveCfg = Release|anycpu
+		{1B97C3C1-0D13-4239-9C58-9D58F76EB6EC}.Release|anycpu.Build.0 = Release|anycpu
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {ADCA1482-904F-47D4-B9A9-2E6FE6B18FB8}
+	EndGlobalSection
+EndGlobal
