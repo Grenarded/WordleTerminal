@@ -1,7 +1,7 @@
 ﻿<Properties StartupConfiguration="{1B97C3C1-0D13-4239-9C58-9D58F76EB6EC}|Default">
   <MonoDevelop.Ide.Workbench ActiveDocument="PetlachBPASS1/Program.cs">
     <Files>
-      <File FileName="PetlachBPASS1/Program.cs" Line="1" Column="1" />
+      <File FileName="PetlachBPASS1/Program.cs" Line="199" Column="26" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -15,7 +15,7 @@
       </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>
-  <MonoDevelop.Ide.ItemProperties.PetlachBPASS1 FirstBuild="True" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.ItemProperties.PetlachBPASS1 PreferredExecutionTarget="MonoDevelop.Default" />
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|anycpu" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

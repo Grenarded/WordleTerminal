@@ -17,8 +17,26 @@ namespace PetlachBPASS1
         const int NUM_ROWS = 6;
         const int NUM_COLS = 5;
 
+        const int INITIAL_CURSOR_LEFT = 2;
+        const int INITIAL_CURSOR_TOP = 3;
+
+        const int GRID_PAD_SIZE = 4;
+
+        static char[] alpha = new char[] { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
+
+        static char[,] guessBoard = new char[NUM_ROWS, NUM_COLS];
+
+        static int curRow = 0;
+        static int curCol = 0;
+
+        static string answer;
+
         public static void Main(string[] args)
         {
+            //Load dictionaries and save words
+            LoadDictionaries(answerWords, "WordleAnswers.txt");
+            LoadDictionaries(extraWords, "WordleExtras.txt");
+
             //Display Menu
             //DisplayMenu();
 
@@ -107,22 +125,37 @@ namespace PetlachBPASS1
         {
             Console.Clear();
 
-            const int INITIAL_CURSOR_LEFT = 2;
-            const int INITIAL_CURSOR_TOP = 2;
+            SetUpGame();
 
-            const int GRID_PAD_SIZE = 4;
+            //Select random 5-letter word <--ADJUST
+            answer = answerWords[rng.Next(0, answerWords.Count)];
 
-            int cursorPosTop = INITIAL_CURSOR_LEFT;
-            int cursorPosLeft = INITIAL_CURSOR_TOP;
+            HandleInput();
+        }
 
-            char[] alpha = new char[] { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X' , 'Y', 'Z' };
+        private static void SetUpGame()
+        {
+            //Fill board array w/ empty chars
+            for (int i = 0; i < NUM_ROWS; i++)
+            {
+                for (int j = 0; j < NUM_COLS; j++)
+                {
+                    guessBoard[i, j] = ' ';
+                }
+            }
 
-            //Load dictionaries and save words
-            LoadDictionaries(answerWords, "WordleAnswers.txt");
-            LoadDictionaries(extraWords, "WordleExtras.txt");
+            //Draw Grid
+            DrawGame();
+        }
 
-            //Select random 5-letter word
-            string answer = answerWords[rng.Next(0, answerWords.Count)];
+        private static void DrawGame()
+        {
+            Console.Clear();
+
+            //TEMPORARY
+            Console.WriteLine(answer);
+            //Console.WriteLine();
+            //
 
             //Display alphabet
             for (int i = 0; i < alpha.Length; i++)
@@ -131,40 +164,95 @@ namespace PetlachBPASS1
             }
             Console.WriteLine("\n");
 
-            //Draw Grid
             Console.WriteLine("---------------------");
             for (int i = 0; i < NUM_ROWS; i++)
             {
                 for (int j = 0; j < NUM_COLS; j++)
                 {
-                    Console.Write("|".PadRight(GRID_PAD_SIZE));
+                    //Console.Write("|".PadRight(GRID_PAD_SIZE));
+                    Console.Write("| " + guessBoard[i, j] + " ");
                 }
                 Console.Write("|\n");
                 Console.WriteLine("---------------------");
             }
+        }
 
-            bool doneGuessing = false;
-
-            while (doneGuessing == false)
+        private static void HandleInput()
+        {
+            bool guessComplete = false;
+            while (guessComplete == false)
             {
-                Console.SetCursorPosition(cursorPosLeft, cursorPosTop);
-                if (Console.Read() != 32 && (cursorPosLeft + GRID_PAD_SIZE) < (INITIAL_CURSOR_LEFT + GRID_PAD_SIZE * NUM_COLS))
-                {
-                    //ConsoleKey prevKey = Console.ReadKey().Key;
-                    //if (prevKey == ConsoleKey.Backspace && cursorPosLeft - 1 >= INITIAL_CURSOR_LEFT)
-                    {
-                        //    cursorPosLeft -= GRID_PAD_SIZE;
-                    }
-                    //else
-                    //{
-                        cursorPosLeft += GRID_PAD_SIZE;
+                int userInput = Console.Read();
 
-                    //}
-                }
-                if (Console.ReadKey().Key == ConsoleKey.Backspace)
+                if ((userInput >= 65 && userInput <= 90) || (userInput >= 97 && userInput <= 122))
                 {
-                    Console.WriteLine("Success!");
+                    if (curCol < NUM_COLS)
+                    {
+                        guessBoard[curRow, curCol] = char.ToUpper((char)userInput);
+                        curCol++;
+                        DrawGame();
+                    }
+                    else
+                    {
+                        ClearLine();
+                    }
                 }
+                else if (userInput == 0) //Backspace ASCII
+                {
+                    if (curCol > 0)
+                    {
+                        guessBoard[curRow, curCol - 1] = ' ';
+                        curCol--;
+                        DrawGame();
+                    }
+                }
+                else if (userInput == 10) //Enter ASCII
+                {
+                    if (guessBoard[curRow, NUM_COLS - 1] != ' ')
+                    {
+                        CheckWord();
+                    }
+                    else
+                    {
+                        //Stop cursor from moving downwards
+                        Console.SetCursorPosition(Console.CursorLeft, Console.CursorTop - 1);
+                    }
+                }
+                else
+                {
+                    ClearLine();
+                }
+            }
+        }
+
+        private static void ClearLine() 
+        {
+            Console.SetCursorPosition(0, Console.CursorTop);
+            Console.Write(new string(' ', Console.WindowWidth));
+            Console.SetCursorPosition(0, Console.CursorTop - 1);
+            Console.Write(answer); //REMOVE AFTER
+        }
+
+        private static void CheckWord()
+        {
+            int correctLetters = 0;
+
+            for (int i = 0; i < NUM_COLS; i++)
+            {
+                if (guessBoard[curRow, i] == char.ToUpper(answer[i]))
+                {
+                    correctLetters++;
+                }
+            }
+
+            if (correctLetters == 5)
+            {
+                //User guessed the word correctly
+                Console.WriteLine("You guessed correctly!");
+            }
+            else
+            {
+                Console.WriteLine("You guessed wrong!");
             }
         }
     }
