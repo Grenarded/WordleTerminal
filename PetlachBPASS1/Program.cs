@@ -26,6 +26,10 @@ namespace PetlachBPASS1
 
         static char[,] guessBoard = new char[NUM_ROWS, NUM_COLS];
 
+        //1: Correct spot. 2: Correct letter wrong spot. 3: Wrong letter
+        static int[,] correctness = new int[NUM_ROWS, NUM_COLS];
+        static int[] alphaStatus = new int[alpha.Length];
+
         static int curRow = 0;
         static int curCol = 0;
 
@@ -126,7 +130,7 @@ namespace PetlachBPASS1
             Console.Clear();
 
             //Select random 5-letter word <--ADJUST
-            answer = "boobs";//answerWords[rng.Next(0, answerWords.Count)];
+            answer = answerWords[rng.Next(0, answerWords.Count)];
 
             SetUpGame();
 
@@ -154,27 +158,51 @@ namespace PetlachBPASS1
 
             Console.WriteLine(answer);
 
-            //TEMPORARY
-            //Console.WriteLine(answer);
-            //Console.WriteLine();
-            //
-
             //Display alphabet
             for (int i = 0; i < alpha.Length; i++)
             {
+                //TODO: COLOR THEM LETTERS!
+                if (alphaStatus[i] == 1)
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkGreen;
+                }
+                else if (alphaStatus[i] == 2)
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkYellow;
+                }
+                else if (alphaStatus[i] == 3)
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                }
+                
                 Console.Write(alpha[i]);
+                Console.ResetColor();
+                Console.Write(" ");
             }
 
             Console.WriteLine();//FIGURE OUT WHY YOU CAN"T DO TWO LINES. Some issue w/ clearing
 
             //Draw Grid
             Console.WriteLine("---------------------");
-            for (int i = 0; i < NUM_ROWS; i++)
+            for (int row = 0; row < NUM_ROWS; row++)
             {
-                for (int j = 0; j < NUM_COLS; j++)
+                for (int col = 0; col < NUM_COLS; col++)
                 {
-                    //Console.Write("|".PadRight(GRID_PAD_SIZE));
-                    Console.Write("| " + guessBoard[i, j] + " ");
+                    Console.Write("|");
+                    if (correctness[row, col] == 1)
+                    {
+                        Console.BackgroundColor = ConsoleColor.DarkGreen;
+                    }
+                    else if (correctness[row, col] == 2)
+                    {
+                        Console.BackgroundColor = ConsoleColor.DarkYellow;
+                    }
+                    else if (correctness[row, col] == 3)
+                    {
+                        Console.BackgroundColor = ConsoleColor.DarkGray;
+                    }
+                    Console.Write(" " + guessBoard[row, col] + " ");
+                    Console.ResetColor();
                 }
                 Console.Write("|\n");
                 Console.WriteLine("---------------------");
@@ -286,27 +314,17 @@ namespace PetlachBPASS1
 
         private static void CheckWord()
         {
-            //1: Correct spot. 2: Correct letter wrong spot. 3: Wrong letter
-            int[] correctness = new int[5];
-
-            //TEMP
-            for (int i = 0; i < correctness.Length; i++)
-            {
-                Console.Write(correctness[i] + ",");
-            }
-
-            Console.WriteLine();
-
             //Store the index of a correct letter in the incorrect position to check for duplicate occurances
             int prevLetterIndex = -1;
 
             //Loop through all the characters
             for (int i = 0; i < NUM_COLS; i++)
             {
-                //Check if the letter from the guessed word is in the same position as the answer's letter. REMOVE THIS LINE?!?
+                //Check if the letter from the guessed word is in the same position as the answer's letter. 
                 if (Char.ToLower(guessBoard[curRow, i]) == answer[i])
                 {
-                    correctness[i] = 1;
+                    correctness[curRow, i] = 1;
+                    alphaStatus[Array.IndexOf(alpha, guessBoard[curRow, i])] = 1;
                 }
                 //Check if the guess contains any characters from the answer in the wrong position
                 else if(answer.Contains(Char.ToLower(guessBoard[curRow, i]))) 
@@ -317,16 +335,74 @@ namespace PetlachBPASS1
                         //Check if the guess character matches the answer character, check if it's already in the correct position, and check if it's a duplicate character
                         if (Char.ToLower(guessBoard[curRow, i]) == answer[j] && Char.ToLower(guessBoard[curRow, j]) != answer[j] && prevLetterIndex != j)
                         {
-                            correctness[i] = 2;
+                            correctness[curRow, i] = 2;
                             prevLetterIndex = j;
+
+                            if (alphaStatus[Array.IndexOf(alpha, guessBoard[curRow, i])] != 1)
+                            {
+                                alphaStatus[Array.IndexOf(alpha, guessBoard[curRow, i])] = 2;
+                            }
                         }
+                        else
+                        {
+                            correctness[curRow, i] = 3;
+
+                            if (alphaStatus[Array.IndexOf(alpha, guessBoard[curRow, i])] != 1 && alphaStatus[Array.IndexOf(alpha, guessBoard[curRow, i])] != 2)
+                            {
+                                alphaStatus[Array.IndexOf(alpha, guessBoard[curRow, i])] = 3;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    correctness[curRow, i] = 3;
+
+                    if (alphaStatus[Array.IndexOf(alpha, guessBoard[curRow, i])] != 1 && alphaStatus[Array.IndexOf(alpha, guessBoard[curRow, i])] != 2)
+                    {
+                        alphaStatus[Array.IndexOf(alpha, guessBoard[curRow, i])] = 3;
                     }
                 }
             }
 
-            for (int i = 0; i < correctness.Length; i++)
+            //TEMP
+            for (int i = 0; i < NUM_COLS; i++)
             {
-                Console.Write(correctness[i] + ",");
+                Console.Write(correctness[curRow, i] + ",");
+            }
+            //
+
+            int correctLetters = 0;
+
+            for (int i = 0; i < NUM_COLS; i++)
+            {
+                if (correctness[curRow, i] == 1)
+                {
+                    correctLetters++;
+                }
+            }
+
+            if (correctLetters == 5)
+            {
+                //CORRECT ANSWER
+                DrawGame();
+                Console.WriteLine("Correct guess. Good job!");
+            }
+            else
+            {
+                if (curRow + 1 < NUM_ROWS)
+                {
+                    //Wrong answer
+                    DrawGame();
+                    curCol = 0;
+                    curRow++;
+                }
+                else
+                {
+                    //Wrong answer and out of turns
+                    DrawGame();
+                    Console.WriteLine("You lost :((");
+                }
             }
         }
     }
