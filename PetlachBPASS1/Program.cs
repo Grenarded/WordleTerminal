@@ -125,10 +125,10 @@ namespace PetlachBPASS1
         {
             Console.Clear();
 
-            SetUpGame();
-
             //Select random 5-letter word <--ADJUST
-            answer = answerWords[rng.Next(0, answerWords.Count)];
+            answer = "boobs";//answerWords[rng.Next(0, answerWords.Count)];
+
+            SetUpGame();
 
             HandleInput();
         }
@@ -152,8 +152,10 @@ namespace PetlachBPASS1
         {
             Console.Clear();
 
-            //TEMPORARY
             Console.WriteLine(answer);
+
+            //TEMPORARY
+            //Console.WriteLine(answer);
             //Console.WriteLine();
             //
 
@@ -162,8 +164,10 @@ namespace PetlachBPASS1
             {
                 Console.Write(alpha[i]);
             }
-            Console.WriteLine("\n");
 
+            Console.WriteLine();//FIGURE OUT WHY YOU CAN"T DO TWO LINES. Some issue w/ clearing
+
+            //Draw Grid
             Console.WriteLine("---------------------");
             for (int i = 0; i < NUM_ROWS; i++)
             {
@@ -180,6 +184,7 @@ namespace PetlachBPASS1
         private static void HandleInput()
         {
             bool guessComplete = false;
+
             while (guessComplete == false)
             {
                 int userInput = Console.Read();
@@ -210,10 +215,11 @@ namespace PetlachBPASS1
                 {
                     if (guessBoard[curRow, NUM_COLS - 1] != ' ')
                     {
-                        CheckWord();
+                        CheckGuess();
                     }
                     else
                     {
+                        Console.WriteLine("Not enough letters");
                         //Stop cursor from moving downwards
                         Console.SetCursorPosition(Console.CursorLeft, Console.CursorTop - 1);
                     }
@@ -229,30 +235,98 @@ namespace PetlachBPASS1
         {
             Console.SetCursorPosition(0, Console.CursorTop);
             Console.Write(new string(' ', Console.WindowWidth));
-            Console.SetCursorPosition(0, Console.CursorTop - 1);
-            Console.Write(answer); //REMOVE AFTER
+            Console.SetCursorPosition(0, Console.CursorTop);
+            //Console.Write(answer); //REMOVE AFTER
+        }
+
+        private static void CheckGuess()
+        {
+            //TODO: ONLY PUSH THRU IF ITS A VALID WORD
+
+            string guess = "";
+            bool validGuess = false;
+
+            //Combine chars making up the guess word into a string so it's easier to compare w/ other dictionary strings
+            for (int i = 0; i < NUM_COLS; i++)
+            {
+                guess += Char.ToString(Char.ToLower(guessBoard[curRow, i]));
+            }
+
+            //Check if either list contains specified word. First check the extras dictionary (more common). If not found, then check the answers dictionary
+            if (!validGuess)
+            {
+                for (int i = 0; i < extraWords.Count; i++)
+                {
+                    if (guess == extraWords[i])
+                    {
+                        validGuess = true;
+                    }
+                }
+            }
+            if (!validGuess)
+            {
+                for (int i = 0; i < answerWords.Count; i++)
+                {
+                    if (guess == answerWords[i])
+                    {
+                        validGuess = true;
+                    }
+                }
+            }
+
+            if (validGuess)
+            {
+                CheckWord();
+            }
+            else
+            {
+                Console.WriteLine("Invalid word. Please try again");
+            }
         }
 
         private static void CheckWord()
         {
-            int correctLetters = 0;
+            //1: Correct spot. 2: Correct letter wrong spot. 3: Wrong letter
+            int[] correctness = new int[5];
 
+            //TEMP
+            for (int i = 0; i < correctness.Length; i++)
+            {
+                Console.Write(correctness[i] + ",");
+            }
+
+            Console.WriteLine();
+
+            //Store the index of a correct letter in the incorrect position to check for duplicate occurances
+            int prevLetterIndex = -1;
+
+            //Loop through all the characters
             for (int i = 0; i < NUM_COLS; i++)
             {
-                if (guessBoard[curRow, i] == char.ToUpper(answer[i]))
+                //Check if the letter from the guessed word is in the same position as the answer's letter. REMOVE THIS LINE?!?
+                if (Char.ToLower(guessBoard[curRow, i]) == answer[i])
                 {
-                    correctLetters++;
+                    correctness[i] = 1;
+                }
+                //Check if the guess contains any characters from the answer in the wrong position
+                else if(answer.Contains(Char.ToLower(guessBoard[curRow, i]))) 
+                {
+                    //Loop through answer's characters
+                    for (int j = 0; j < NUM_COLS; j++)
+                    {
+                        //Check if the guess character matches the answer character, check if it's already in the correct position, and check if it's a duplicate character
+                        if (Char.ToLower(guessBoard[curRow, i]) == answer[j] && Char.ToLower(guessBoard[curRow, j]) != answer[j] && prevLetterIndex != j)
+                        {
+                            correctness[i] = 2;
+                            prevLetterIndex = j;
+                        }
+                    }
                 }
             }
 
-            if (correctLetters == 5)
+            for (int i = 0; i < correctness.Length; i++)
             {
-                //User guessed the word correctly
-                Console.WriteLine("You guessed correctly!");
-            }
-            else
-            {
-                Console.WriteLine("You guessed wrong!");
+                Console.Write(correctness[i] + ",");
             }
         }
     }
