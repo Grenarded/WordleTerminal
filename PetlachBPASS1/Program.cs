@@ -10,17 +10,15 @@ namespace PetlachBPASS1
         static Random rng = new Random();
 
         static StreamReader inFile;
+        static StreamWriter outFile;
+
+        const string STATS_FILE = "Stats.txt";
 
         static List<string> answerWords = new List<string>();
         static List<string> extraWords = new List<string>();
 
         const int NUM_ROWS = 6;
         const int NUM_COLS = 5;
-
-        const int INITIAL_CURSOR_LEFT = 2;
-        const int INITIAL_CURSOR_TOP = 3;
-
-        const int GRID_PAD_SIZE = 4;
 
         static char[] alpha = new char[] { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
 
@@ -30,14 +28,14 @@ namespace PetlachBPASS1
         static int[,] correctness = new int[NUM_ROWS, NUM_COLS];
         static int[] alphaStatus = new int[alpha.Length];
 
-        static int curRow = 0;
+        static int curRow = -1;
         static int curCol = 0;
 
         static string answer;
 
         //Stats
         static List<int> guessDistrib = new List<int>();
-        static int gamesPlayed = 0;
+        static float gamesPlayed = 0;
         static int currentStreak;
         static int maxStreak;
 
@@ -47,11 +45,11 @@ namespace PetlachBPASS1
             LoadDictionaries(answerWords, "WordleAnswers.txt");
             LoadDictionaries(extraWords, "WordleExtras.txt");
 
-            //Display Menu
-            //DisplayMenu();
+            //Load the stats
+            LoadStats();
 
-            //SHORTCUT
-            PlayGame();
+            //Display Menu
+            DisplayMenu();
         }
 
         private static void LoadDictionaries(List<string> wordList, string fileName)
@@ -107,15 +105,15 @@ namespace PetlachBPASS1
                             break;
                         case 2:
                             //Instructions
-                            Console.WriteLine("Inst.");
+                            DisplayInstructions();
                             break;
                         case 3:
                             //Stats
-                            LoadStats(false);
+                            DisplayStats(false);
                             break;
                         case 4:
                             //Settings
-                            Console.WriteLine("Settings");
+                            SettingsMenu();
                             break;
                         case 5:
                             //Exit game
@@ -411,7 +409,7 @@ namespace PetlachBPASS1
                 gamesPlayed++;
                 guessDistrib.Add(curRow + 1);
                 currentStreak++;
-                LoadStats(true);
+                DisplayStats(true);
             }
             else
             {
@@ -434,12 +432,40 @@ namespace PetlachBPASS1
                     gamesPlayed++;
                     currentStreak = 0;
                     curRow++;
-                    LoadStats(true);
+                    DisplayStats(true);
                 }
             }
         }
 
-        private static void LoadStats(bool gamePlayed) //DOESN'T WORK RIGHT
+        private static void DisplayInstructions()
+        {
+            Console.Clear();
+
+            Console.WriteLine("How To Play");
+            Console.WriteLine("-----------");
+            Console.WriteLine("\nGuess the word in 6 tries\n");
+            Console.WriteLine("-Each guess must be a valid 5-letter word");
+            Console.WriteLine("\n-The colour of the tiles will change to show how close your guess was to the word");
+
+            Console.Write("\t-Letters in the correct spot will be ");
+            Console.BackgroundColor = ConsoleColor.DarkGreen;
+            Console.WriteLine("GREEN");
+            Console.ResetColor();
+            Console.Write("\t-Correct letters in the wrong spot will be ");
+            Console.BackgroundColor = ConsoleColor.DarkYellow;
+            Console.WriteLine("YELLOW");
+            Console.ResetColor();
+            Console.Write("\t-Incorrect letters will be ");
+            Console.BackgroundColor = ConsoleColor.DarkGray;
+            Console.WriteLine("GRAY");
+            Console.ResetColor();
+            Console.WriteLine("\n-Keep an eye on the alphabet at the top of your game screen,\nit will help you keep track of each letter");
+
+            Console.WriteLine("\nPress enter to return to main menu");
+            Console.ReadLine();
+        }
+
+        private static void DisplayStats(bool gamePlayed) //DOESN'T WORK RIGHT
         {
             Console.Clear();
 
@@ -452,7 +478,16 @@ namespace PetlachBPASS1
             Console.WriteLine("----------\n");
 
             Console.WriteLine("Games Played: " + gamesPlayed);
-            Console.WriteLine("Win Percentage: " + ((guessDistrib.Count / gamesPlayed) * 100) + "%"); //DOESN'T WORK WHEN LOST
+
+            Console.Write("Win Percentage: ");
+            if (gamesPlayed == 0)
+            {
+                Console.WriteLine("N/A");   
+            }
+            else
+            {
+                Console.WriteLine(Math.Round((guessDistrib.Count / gamesPlayed) * 100, 2) + "%");
+            }
 
             Console.WriteLine("Current Streak: " + currentStreak);
             Console.WriteLine("Max Streak: " + maxStreak);
@@ -490,10 +525,10 @@ namespace PetlachBPASS1
                     {
                         Console.BackgroundColor = ConsoleColor.DarkGreen;
                     }
-                    //else
-                    //{
-                    //    Console.BackgroundColor = ConsoleColor.DarkGray;
-                    //}
+                    else
+                    {
+                        Console.BackgroundColor = ConsoleColor.DarkGray;
+                    }
                 }
                 else
                 {
@@ -512,7 +547,13 @@ namespace PetlachBPASS1
                 Console.WriteLine();
             }
 
-            //DOESN'T REACH THIS? 
+            Console.WriteLine();
+
+            if (gamePlayed)
+            {
+                SaveStats();
+            }
+
             while (true)
             {
                 if (gamePlayed)
@@ -520,6 +561,7 @@ namespace PetlachBPASS1
                     Console.WriteLine("1. Play Again");
                     Console.WriteLine("2. Reset Stats");
                     Console.WriteLine("3. Main Menu");
+                    Console.WriteLine("\nEnter Selection: ");
 
                     try
                     {
@@ -532,7 +574,8 @@ namespace PetlachBPASS1
                                 break;
                             case 2:
                                 //Reset stats
-                                Console.WriteLine("Reset stats!");
+                                ResetStats();
+                                DisplayStats(true);
                                 break;
                             case 3:
                                 //Stats
@@ -555,6 +598,7 @@ namespace PetlachBPASS1
                 {
                     Console.WriteLine("1. Reset Stats");
                     Console.WriteLine("2. Main Menu");
+                    Console.WriteLine("\nEnter Selection: ");
 
                     try
                     {
@@ -563,7 +607,8 @@ namespace PetlachBPASS1
                         {
                             case 1:
                                 //Reset stats
-                                Console.WriteLine("Reset stats!");
+                                ResetStats();
+                                DisplayStats(false);
                                 break;
                             case 2:
                                 DisplayMenu();
@@ -581,6 +626,96 @@ namespace PetlachBPASS1
                     }
                 }
             }
+        }
+
+        private static void SaveStats() //FILE PATH VIOLATION??
+        {
+            try
+            {
+                outFile = File.CreateText(STATS_FILE);
+
+                outFile.WriteLine(guessDistrib.Count);
+
+                for (int i = 0; i < guessDistrib.Count; i++)
+                {
+                    outFile.WriteLine(guessDistrib[i]);
+                }
+
+                outFile.WriteLine(gamesPlayed);
+
+                outFile.Write(currentStreak + " " + maxStreak);
+
+                outFile.Close();
+            }
+            catch (FileLoadException fl)
+            {
+                Console.WriteLine("SaveStats: " + fl.Message);
+            }
+            catch (FileNotFoundException fnf)
+            {
+                Console.WriteLine("SaveStats: " + fnf.Message);
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine("SaveStats: " + e.Message);
+            }
+        }
+
+        private static void LoadStats()
+        {
+            try
+            {
+                inFile = File.OpenText(STATS_FILE);
+
+                int guessDistribCount = Convert.ToInt32(inFile.ReadLine());
+
+                for (int i =0; i < guessDistribCount; i++)
+                {
+                    guessDistrib.Add(Convert.ToInt32(inFile.ReadLine()));
+                }
+
+                gamesPlayed = Convert.ToInt32(inFile.ReadLine());
+                currentStreak = Convert.ToInt32(inFile.ReadLine().Split(' ')[0]);
+                maxStreak = Convert.ToInt32(inFile.ReadLine().Split(' ')[1]);
+
+                inFile.Close();
+            }
+            catch(FileNotFoundException)
+            {
+                //Set Default Stats
+                gamesPlayed = 0;
+                currentStreak = 0;
+                maxStreak = 0;
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine("Load stats: " + e.Message);
+            }
+        }
+
+        private static void ResetStats()
+        {
+            curRow = -1;
+
+            File.Delete(STATS_FILE);
+
+            //Set Default Stats
+            guessDistrib.Clear();
+            gamesPlayed = 0;
+            currentStreak = 0;
+            maxStreak = 0;
+        }
+
+        private static void SettingsMenu()
+        {
+            Console.Clear();
+            Console.WriteLine("Settings");
+            Console.WriteLine("--------");
+            Console.WriteLine("If you're seeing this, then unfortunately there was not enough time to complete the settings page.");
+            Console.WriteLine("I considered adding ASCII art, but my pride in low line numbers kept me from doing so (and I should probably be spending that time coding anyways...)");
+            Console.WriteLine("\nPress enter to return to Main Menu");
+            Console.ReadLine();
+            DisplayMenu();
         }
     }
 }
