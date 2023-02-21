@@ -38,7 +38,6 @@ namespace PetlachBPASS1
         //Stats
         static List<int> guessDistrib = new List<int>();
         static int gamesPlayed = 0;
-        static int gamesWon; //REMOVE: use length of guessDistrib
         static int currentStreak;
         static int maxStreak;
 
@@ -93,7 +92,8 @@ namespace PetlachBPASS1
                 Console.WriteLine("1. Play");
                 Console.WriteLine("2. Instructions");
                 Console.WriteLine("3. Stats");
-                Console.WriteLine("4. Settings\n");
+                Console.WriteLine("4. Settings");
+                Console.WriteLine("5. Exit\n");
                 Console.Write("Enter selection: ");
 
                 try
@@ -111,11 +111,15 @@ namespace PetlachBPASS1
                             break;
                         case 3:
                             //Stats
-                            Console.WriteLine("Stats");
+                            LoadStats(false);
                             break;
                         case 4:
                             //Settings
                             Console.WriteLine("Settings");
+                            break;
+                        case 5:
+                            //Exit game
+                            Console.WriteLine("Game should exit now!");
                             break;
                         default:
                             Console.WriteLine("Not a valid input. Press enter to try again");
@@ -132,7 +136,7 @@ namespace PetlachBPASS1
             }
         }
 
-        private static void PlayGame()
+        private static void PlayGame()//REDUNDANT. FIX
         {
             Console.Clear();
 
@@ -146,13 +150,22 @@ namespace PetlachBPASS1
 
         private static void SetUpGame()
         {
-            //Fill board array w/ empty chars
+            curCol = 0;
+            curRow = 0;
+
+            //Fill board array w/ empty chars and reset correctness
             for (int i = 0; i < NUM_ROWS; i++)
             {
                 for (int j = 0; j < NUM_COLS; j++)
                 {
                     guessBoard[i, j] = ' ';
+                    correctness[i, j] = 0;
                 }
+            }
+
+            for (int i = 0; i < alphaStatus.Length; i++)
+            {
+                alphaStatus[i] = 0;
             }
 
             //Draw Grid
@@ -398,8 +411,7 @@ namespace PetlachBPASS1
                 gamesPlayed++;
                 guessDistrib.Add(curRow + 1);
                 currentStreak++;
-                LoadStats();
-
+                LoadStats(true);
             }
             else
             {
@@ -422,12 +434,12 @@ namespace PetlachBPASS1
                     gamesPlayed++;
                     currentStreak = 0;
                     curRow++;
-                    LoadStats();
+                    LoadStats(true);
                 }
             }
         }
 
-        private static void LoadStats()
+        private static void LoadStats(bool gamePlayed) //DOESN'T WORK RIGHT
         {
             Console.Clear();
 
@@ -440,7 +452,7 @@ namespace PetlachBPASS1
             Console.WriteLine("----------\n");
 
             Console.WriteLine("Games Played: " + gamesPlayed);
-            Console.WriteLine("Win Percentage: " + ((guessDistrib.Count / gamesPlayed) * 100) + "%");
+            Console.WriteLine("Win Percentage: " + ((guessDistrib.Count / gamesPlayed) * 100) + "%"); //DOESN'T WORK WHEN LOST
 
             Console.WriteLine("Current Streak: " + currentStreak);
             Console.WriteLine("Max Streak: " + maxStreak);
@@ -451,16 +463,26 @@ namespace PetlachBPASS1
             for (int i = 0; i <= NUM_COLS; i++)
             {
                 Console.Write(i + 1 + " ");
-                int guessRow = 0;
+                float guessesForRow = 0;
                 for (int j = 0; j < guessDistrib.Count; j++)
                 {
                     if (guessDistrib[j] == (i+1))
                     {
-                        guessRow++;
+                        guessesForRow++;
                     }
                 }
-                //TODO: FIX DIVIDE BY ZERO ERROR IF GAME WAS LOST
-                int guessGraphPercent = 0; //= Convert.ToInt32(Math.Round(Convert.ToDecimal((guessRow / guessDistrib.Count) * 24), 0, MidpointRounding.AwayFromZero));
+
+
+                float guessGraphPercent;
+
+                if (guessDistrib.Count > 0)
+                {
+                    guessGraphPercent = ((guessesForRow / guessDistrib.Count) * 24);
+                }
+                else
+                {
+                    guessGraphPercent = 0;
+                }
 
                 if (curRow < NUM_ROWS)
                 {
@@ -468,7 +490,10 @@ namespace PetlachBPASS1
                     {
                         Console.BackgroundColor = ConsoleColor.DarkGreen;
                     }
-                    guessGraphPercent = Convert.ToInt32(Math.Round(Convert.ToDecimal((guessRow / guessDistrib.Count) * 24), 0, MidpointRounding.AwayFromZero));
+                    //else
+                    //{
+                    //    Console.BackgroundColor = ConsoleColor.DarkGray;
+                    //}
                 }
                 else
                 {
@@ -480,15 +505,82 @@ namespace PetlachBPASS1
                     Console.Write(" ");
                 }
 
-                Console.Write(guessRow);
+                Console.Write(guessesForRow);
 
                 Console.ResetColor();
 
                 Console.WriteLine();
             }
 
-            //Give options to:
-            //Play again, reset stats, exit. DIFFERENT MENU WHEN ACCESSING FROM MAIN MENU
+            //DOESN'T REACH THIS? 
+            while (true)
+            {
+                if (gamePlayed)
+                {
+                    Console.WriteLine("1. Play Again");
+                    Console.WriteLine("2. Reset Stats");
+                    Console.WriteLine("3. Main Menu");
+
+                    try
+                    {
+                        int input = Convert.ToInt32(Console.ReadLine());
+                        switch (input)
+                        {
+                            case 1:
+                                //Play
+                                PlayGame();
+                                break;
+                            case 2:
+                                //Reset stats
+                                Console.WriteLine("Reset stats!");
+                                break;
+                            case 3:
+                                //Stats
+                                DisplayMenu();
+                                break;
+                            default:
+                                Console.WriteLine("Not a valid input. Press enter to try again");
+                                Console.ReadLine();
+                                break;
+                        }
+
+                    }
+                    catch
+                    {
+                        Console.WriteLine("Not a valid input. Press enter to try again");
+                        Console.ReadLine();
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("1. Reset Stats");
+                    Console.WriteLine("2. Main Menu");
+
+                    try
+                    {
+                        int input = Convert.ToInt32(Console.ReadLine());
+                        switch (input)
+                        {
+                            case 1:
+                                //Reset stats
+                                Console.WriteLine("Reset stats!");
+                                break;
+                            case 2:
+                                DisplayMenu();
+                                break;
+                            default:
+                                Console.WriteLine("Not a valid input. Press enter to try again");
+                                Console.ReadLine();
+                                break;
+                        }
+                    }
+                    catch
+                    {
+                        Console.WriteLine("Not a valid input. Press enter to try again"); //REMOVE THIS BLOCK? IN OTHER INSTANCES AS WELL?
+                        Console.ReadLine();
+                    }
+                }
+            }
         }
     }
 }
