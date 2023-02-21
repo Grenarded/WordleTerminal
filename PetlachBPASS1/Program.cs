@@ -35,6 +35,13 @@ namespace PetlachBPASS1
 
         static string answer;
 
+        //Stats
+        static List<int> guessDistrib = new List<int>();
+        static int gamesPlayed = 0;
+        static int gamesWon; //REMOVE: use length of guessDistrib
+        static int currentStreak;
+        static int maxStreak;
+
         public static void Main(string[] args)
         {
             //Load dictionaries and save words
@@ -230,7 +237,7 @@ namespace PetlachBPASS1
                         ClearLine();
                     }
                 }
-                else if (userInput == 0) //Backspace ASCII
+                else if (userInput == 0) //Backspace ASCII TODO: arrow keys also delete
                 {
                     if (curCol > 0)
                     {
@@ -345,7 +352,7 @@ namespace PetlachBPASS1
                         }
                         else
                         {
-                            correctness[curRow, i] = 3;
+                            //correctness[curRow, i] = 3; TODO: Fix this logic. Causes issues when duplicate letters appear (and only one is correct)
 
                             if (alphaStatus[Array.IndexOf(alpha, guessBoard[curRow, i])] != 1 && alphaStatus[Array.IndexOf(alpha, guessBoard[curRow, i])] != 2)
                             {
@@ -363,14 +370,13 @@ namespace PetlachBPASS1
                         alphaStatus[Array.IndexOf(alpha, guessBoard[curRow, i])] = 3;
                     }
                 }
-            }
 
-            //TEMP
-            for (int i = 0; i < NUM_COLS; i++)
-            {
-                Console.Write(correctness[curRow, i] + ",");
+                //BANDAGE SOLUTION?
+                if (correctness[curRow, i] == 0)
+                {
+                    correctness[curRow, i] = 3;
+                }
             }
-            //
 
             int correctLetters = 0;
 
@@ -386,7 +392,14 @@ namespace PetlachBPASS1
             {
                 //CORRECT ANSWER
                 DrawGame();
-                Console.WriteLine("Correct guess. Good job!");
+                Console.WriteLine("Correct, good job! \nPress enter to continue");
+                Console.ReadLine();
+                //STATS
+                gamesPlayed++;
+                guessDistrib.Add(curRow + 1);
+                currentStreak++;
+                LoadStats();
+
             }
             else
             {
@@ -394,6 +407,7 @@ namespace PetlachBPASS1
                 {
                     //Wrong answer
                     DrawGame();
+                    //
                     curCol = 0;
                     curRow++;
                 }
@@ -401,9 +415,80 @@ namespace PetlachBPASS1
                 {
                     //Wrong answer and out of turns
                     DrawGame();
-                    Console.WriteLine("You lost :((");
+                    //TEMP
+                    Console.WriteLine($"The answer was: {answer.ToUpper()} \nPress enter to continue");
+                    Console.ReadLine();
+                    //STATS
+                    gamesPlayed++;
+                    currentStreak = 0;
+                    curRow++;
+                    LoadStats();
                 }
             }
+        }
+
+        private static void LoadStats()
+        {
+            Console.Clear();
+
+            if (currentStreak > maxStreak)
+            {
+                maxStreak = currentStreak;
+            }
+
+            Console.WriteLine("Statistics");
+            Console.WriteLine("----------\n");
+
+            Console.WriteLine("Games Played: " + gamesPlayed);
+            Console.WriteLine("Win Percentage: " + ((guessDistrib.Count / gamesPlayed) * 100) + "%");
+
+            Console.WriteLine("Current Streak: " + currentStreak);
+            Console.WriteLine("Max Streak: " + maxStreak);
+
+            //Guess distribution
+            Console.WriteLine("\nGuess Distribution:\n");
+
+            for (int i = 0; i <= NUM_COLS; i++)
+            {
+                Console.Write(i + 1 + " ");
+                int guessRow = 0;
+                for (int j = 0; j < guessDistrib.Count; j++)
+                {
+                    if (guessDistrib[j] == (i+1))
+                    {
+                        guessRow++;
+                    }
+                }
+                //TODO: FIX DIVIDE BY ZERO ERROR IF GAME WAS LOST
+                int guessGraphPercent = 0; //= Convert.ToInt32(Math.Round(Convert.ToDecimal((guessRow / guessDistrib.Count) * 24), 0, MidpointRounding.AwayFromZero));
+
+                if (curRow < NUM_ROWS)
+                {
+                    if (i == curRow)
+                    {
+                        Console.BackgroundColor = ConsoleColor.DarkGreen;
+                    }
+                    guessGraphPercent = Convert.ToInt32(Math.Round(Convert.ToDecimal((guessRow / guessDistrib.Count) * 24), 0, MidpointRounding.AwayFromZero));
+                }
+                else
+                {
+                    Console.BackgroundColor = ConsoleColor.DarkGray;
+                }
+
+                for (int count = 0; count < guessGraphPercent; count++)
+                {
+                    Console.Write(" ");
+                }
+
+                Console.Write(guessRow);
+
+                Console.ResetColor();
+
+                Console.WriteLine();
+            }
+
+            //Give options to:
+            //Play again, reset stats, exit. DIFFERENT MENU WHEN ACCESSING FROM MAIN MENU
         }
     }
 }
