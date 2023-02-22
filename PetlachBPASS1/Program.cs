@@ -21,6 +21,8 @@ namespace PetlachBPASS1
 
         const string STATS_FILE = "Stats.txt";
 
+        static bool gameRunning = true;
+
         static List<string> answerWords = new List<string>();
         static List<string> extraWords = new List<string>();
 
@@ -70,7 +72,6 @@ namespace PetlachBPASS1
                 {
                     wordList.Add(inFile.ReadLine());
                 }
-                //inFile.Close();
             }
             catch(FileNotFoundException fnf)
             {
@@ -95,18 +96,20 @@ namespace PetlachBPASS1
 
         private static void DisplayMenu()
         {
+            curRow = -1;
+
             int input;
 
-            while (true)
+            while (gameRunning)
             {
                 Console.Clear();
-                Console.WriteLine(String.Format("{0," + ((Console.WindowWidth / 2) + ("Welcome to WORDLE!".Length / 2)) + "}", "Welcome to WORDLE!\n"));
-                Console.WriteLine(String.Format("{0," + ((Console.WindowWidth / 2) + ("Welcome to WORDLE!".Length / 2)) + "}", "1. Play           "));
-                Console.WriteLine(String.Format("{0," + ((Console.WindowWidth / 2) + ("Welcome to WORDLE!".Length / 2)) + "}", "2. Instructions   "));
-                Console.WriteLine(String.Format("{0," + ((Console.WindowWidth / 2) + ("Welcome to WORDLE!".Length / 2)) + "}", "3. Stats          "));
-                Console.WriteLine(String.Format("{0," + ((Console.WindowWidth / 2) + ("4. Settings".Length / 2)) + "}", "4. Settings"));
-                Console.WriteLine(String.Format("{0," + ((Console.WindowWidth / 2) + ("5. Exit".Length / 2)) + "}", "5. Exit           \n"));
-                Console.Write(String.Format("{0," + ((Console.WindowWidth / 2) + ("Welcome to WORDLE!".Length / 2)) + "}", "Enter selection: "));
+                Console.WriteLine("Welcome to WORDLE!\n");
+                Console.WriteLine("1. Play");
+                Console.WriteLine("2. Instructions");
+                Console.WriteLine("3. Stats");
+                Console.WriteLine("4. Settings");
+                Console.WriteLine("5. Exit\n");
+                Console.Write("Enter selection: ");
 
                 try
                 {
@@ -131,14 +134,13 @@ namespace PetlachBPASS1
                             break;
                         case 5:
                             //Exit game
-                            Console.WriteLine("Game should exit now!");
+                            gameRunning = false;
                             break;
                         default:
                             Console.WriteLine("Not a valid input. Press enter to try again");
                             Console.ReadLine();
                             break;
                     }
-
                 }
                 catch
                 {
@@ -187,6 +189,8 @@ namespace PetlachBPASS1
         private static void DrawGame()
         {
             Console.Clear();
+
+            Console.WriteLine(answer);
 
             //Display alphabet
             for (int i = 0; i < alpha.Length; i++)
@@ -245,22 +249,9 @@ namespace PetlachBPASS1
 
             while (guessComplete == false)
             {
-                int userInput = Console.Read();
+                ConsoleKey keyPressed = Console.ReadKey().Key;
 
-                if ((userInput >= 65 && userInput <= 90) || (userInput >= 97 && userInput <= 122))
-                {
-                    if (curCol < NUM_COLS)
-                    {
-                        guessBoard[curRow, curCol] = char.ToUpper((char)userInput);
-                        curCol++;
-                        DrawGame();
-                    }
-                    else
-                    {
-                        ClearLine();
-                    }
-                }
-                else if (userInput == 0) //Backspace ASCII TODO: arrow keys also delete
+                if (keyPressed == ConsoleKey.Backspace)
                 {
                     if (curCol > 0)
                     {
@@ -269,10 +260,11 @@ namespace PetlachBPASS1
                         DrawGame();
                     }
                 }
-                else if (userInput == 10) //Enter ASCII
+                else if (keyPressed == ConsoleKey.Enter)
                 {
                     if (guessBoard[curRow, NUM_COLS - 1] != ' ')
                     {
+                        guessComplete = true;
                         CheckGuess();
                     }
                     else
@@ -280,6 +272,19 @@ namespace PetlachBPASS1
                         Console.WriteLine("Not enough letters");
                         //Stop cursor from moving downwards
                         Console.SetCursorPosition(Console.CursorLeft, Console.CursorTop - 1);
+                    }
+                }
+                else if (Convert.ToChar(keyPressed) >= 'A' && Convert.ToChar(keyPressed) <= 'Z')
+                {
+                    if (curCol < NUM_COLS)
+                    {
+                        guessBoard[curRow, curCol] = Convert.ToChar(keyPressed);
+                        curCol++;
+                        DrawGame();
+                    }
+                    else
+                    {
+                        ClearLine();
                     }
                 }
                 else
@@ -293,7 +298,7 @@ namespace PetlachBPASS1
         {
             Console.SetCursorPosition(0, Console.CursorTop);
             Console.Write(new string(' ', Console.WindowWidth));
-            Console.SetCursorPosition(0, Console.CursorTop);
+            Console.SetCursorPosition(0, Console.CursorTop - 1);
             //Console.Write(answer); //REMOVE AFTER
         }
 
@@ -339,6 +344,7 @@ namespace PetlachBPASS1
             else
             {
                 Console.WriteLine("Invalid word. Please try again");
+                HandleInput();
             }
         }
 
@@ -432,6 +438,7 @@ namespace PetlachBPASS1
                     //
                     curCol = 0;
                     curRow++;
+                    HandleInput();
                 }
                 else
                 {
@@ -477,7 +484,7 @@ namespace PetlachBPASS1
             Console.ReadLine();
         }
 
-        private static void DisplayStats(bool gamePlayed) //DOESN'T WORK RIGHT
+        private static void DisplayStats(bool gamePlayed) //Menu issue
         {
             Console.Clear();
 
@@ -519,7 +526,6 @@ namespace PetlachBPASS1
                     }
                 }
 
-
                 float guessGraphPercent;
 
                 if (guessDistrib.Count > 0)
@@ -547,10 +553,11 @@ namespace PetlachBPASS1
                     Console.BackgroundColor = ConsoleColor.DarkGray;
                 }
 
-                for (int count = 0; count < guessGraphPercent; count++)
-                {
-                    Console.Write(" ");
-                }
+                //for (int count = 0; count < guessGraphPercent; count++)
+                //{
+                //    Console.Write(" ");
+                //}
+                Console.Write("".PadRight((int)guessGraphPercent));
 
                 Console.Write(guessesForRow);
 
@@ -566,8 +573,10 @@ namespace PetlachBPASS1
                 SaveStats();
             }
 
-            while (true)
+            int input = 0;
+            while (input != 3 && gameRunning) //Menu loops back into this. Look into logic and redo!
             {
+                //input = Convert.ToInt32(Console.ReadLine());
                 if (gamePlayed)
                 {
                     Console.WriteLine("1. Play Again");
@@ -577,7 +586,7 @@ namespace PetlachBPASS1
 
                     try
                     {
-                        int input = Convert.ToInt32(Console.ReadLine());
+                        input = Convert.ToInt32(Console.ReadLine());
                         switch (input)
                         {
                             case 1:
@@ -591,14 +600,14 @@ namespace PetlachBPASS1
                                 break;
                             case 3:
                                 //Stats
-                                DisplayMenu();
+                                input = 3;
+                                Console.WriteLine("I am 3!");
                                 break;
                             default:
                                 Console.WriteLine("Not a valid input. Press enter to try again");
                                 Console.ReadLine();
                                 break;
                         }
-
                     }
                     catch
                     {
@@ -614,7 +623,7 @@ namespace PetlachBPASS1
 
                     try
                     {
-                        int input = Convert.ToInt32(Console.ReadLine());
+                        input = Convert.ToInt32(Console.ReadLine());
                         switch (input)
                         {
                             case 1:
@@ -640,7 +649,7 @@ namespace PetlachBPASS1
             }
         }
 
-        private static void SaveStats() //FILE PATH VIOLATION??
+        private static void SaveStats() 
         {
             try
             {
@@ -656,8 +665,6 @@ namespace PetlachBPASS1
                 outFile.WriteLine(gamesPlayed);
 
                 outFile.Write(currentStreak + " " + maxStreak);
-
-                //outFile.Close();
             }
             catch (FileLoadException fl)
             {
@@ -696,8 +703,6 @@ namespace PetlachBPASS1
                 gamesPlayed = Convert.ToInt32(inFile.ReadLine());
                 currentStreak = Convert.ToInt32(inFile.ReadLine().Split(' ')[0]);
                 maxStreak = Convert.ToInt32(inFile.ReadLine().Split(' ')[1]);
-
-                //inFile.Close();
             }
             catch(FileNotFoundException)
             {
