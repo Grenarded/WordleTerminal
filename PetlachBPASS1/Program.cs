@@ -21,8 +21,6 @@ namespace PetlachBPASS1
 
         const string STATS_FILE = "Stats.txt";
 
-        static bool gameRunning = true;
-
         static List<string> answerWords = new List<string>();
         static List<string> extraWords = new List<string>();
 
@@ -118,7 +116,7 @@ namespace PetlachBPASS1
                     {
                         case 1:
                             //Play
-                            PlayGame();
+                            SetUpGame();
                             break;
                         case 2:
                             //Instructions
@@ -126,7 +124,6 @@ namespace PetlachBPASS1
                             break;
                         case 3:
                             //Stats
-                            DisplayStats(false);
                             StatsPreGameMenu();
                             break;
                         case 4:
@@ -135,7 +132,6 @@ namespace PetlachBPASS1
                             break;
                         case 5:
                             //Exit game
-                            //gameRunning = false;
                             break;
                         default:
                             Console.WriteLine("Not a valid input. Press enter to try again");
@@ -151,20 +147,10 @@ namespace PetlachBPASS1
             }
         }
 
-        private static void PlayGame()//REDUNDANT. FIX
-        {
-            Console.Clear();
-
-            //Select random 5-letter word <--ADJUST
-            answer = answerWords[rng.Next(0, answerWords.Count)];
-
-            SetUpGame();
-
-            HandleInput();
-        }
-
         private static void SetUpGame()
         {
+            answer = answerWords[rng.Next(0, answerWords.Count)];
+
             curCol = 0;
             curRow = 0;
 
@@ -183,8 +169,12 @@ namespace PetlachBPASS1
                 alphaStatus[i] = 0;
             }
 
-            //Draw Grid
+            //Draw Grid and alphabet
             DrawGame();
+
+            HandleInput();
+
+            StatsPostGameMenu();
         }
 
         private static void DrawGame()
@@ -215,7 +205,7 @@ namespace PetlachBPASS1
                 Console.Write(" ");
             }
 
-            Console.WriteLine();//FIGURE OUT WHY YOU CAN"T DO TWO LINES. Some issue w/ clearing
+            Console.WriteLine();
 
             //Draw Grid
             Console.WriteLine("---------------------");
@@ -428,8 +418,8 @@ namespace PetlachBPASS1
                 gamesPlayed++;
                 guessDistrib.Add(curRow + 1);
                 currentStreak++;
-                DisplayStats(true);
-                StatsPostGameMenu();
+                //DisplayStats(true);
+                //StatsPostGameMenu();
             }
             else
             {
@@ -453,8 +443,8 @@ namespace PetlachBPASS1
                     gamesPlayed++;
                     currentStreak = 0;
                     curRow++;
-                    DisplayStats(true);
-                    StatsPostGameMenu();
+                    //DisplayStats(true);
+                    //StatsPostGameMenu();
                 }
             }
         }
@@ -556,10 +546,6 @@ namespace PetlachBPASS1
                     Console.BackgroundColor = ConsoleColor.DarkGray;
                 }
 
-                //for (int count = 0; count < guessGraphPercent; count++)
-                //{
-                //    Console.Write(" ");
-                //}
                 Console.Write("".PadRight((int)guessGraphPercent));
 
                 Console.Write(guessesForRow);
@@ -575,123 +561,11 @@ namespace PetlachBPASS1
             {
                 SaveStats();
             }
-
-            //int input;
-
-            //bool menu1 = false;
-            //bool menu2 = false;
-
-            //while (!menu1 && !menu2) //Menu loops back into this. Look into logic and redo!
-            //{
-            //    //input = Convert.ToInt32(Console.ReadLine());
-            //    if (gamePlayed)
-            //    {
-            //        Console.WriteLine("1. Play Again");
-            //        Console.WriteLine("2. Reset Stats");
-            //        Console.WriteLine("3. Main Menu");
-            //        Console.Write("\nEnter Selection: ");
-
-            //        try
-            //        {
-            //            input = Convert.ToInt32(Console.ReadLine());
-            //            switch (input)
-            //            {
-            //                case 1:
-            //                    //Play
-            //                    PlayGame();
-            //                    break;
-            //                case 2:
-            //                    //Reset stats
-            //                    ResetStats();
-            //                    DisplayStats(true);
-            //                    break;
-            //                case 3:
-            //                    //Stats
-            //                    //input = 3;
-            //                    //Console.WriteLine("I am 3!");
-            //                    menu1 = true;
-            //                    break;
-            //                default:
-            //                    Console.WriteLine("Not a valid input. Press enter to try again");
-            //                    Console.ReadLine();
-            //                    break;
-            //            }
-            //        }
-            //        catch
-            //        {
-            //            Console.WriteLine("Not a valid input. Press enter to try again");
-            //            Console.ReadLine();
-            //        }
-            //    }
-            //    else
-            //    {
-            //        Console.WriteLine("1. Reset Stats");
-            //        Console.WriteLine("2. Main Menu");
-            //        Console.Write("\nEnter Selection: ");
-
-            //        try
-            //        {
-            //            input = Convert.ToInt32(Console.ReadLine());
-            //            switch (input)
-            //            {
-            //                case 1:
-            //                    //Reset stats
-            //                    ResetStats();
-            //                    DisplayStats(false);
-            //                    break;
-            //                case 2:
-            //                    //DisplayMenu();
-            //                    menu2 = true;
-            //                    break;
-            //                default:
-            //                    Console.WriteLine("Not a valid input. Press enter to try again");
-            //                    Console.ReadLine();
-            //                    break;
-            //            }
-            //        }
-            //        catch
-            //        {
-            //            Console.WriteLine("Not a valid input. Press enter to try again"); //REMOVE THIS BLOCK? IN OTHER INSTANCES AS WELL?
-            //            Console.ReadLine();
-            //        }
-            //    }
-            //}
-
-            //while (input != 2 && !gamePlayed) //Menu loops back into this. Look into logic and redo!
-            //{
-            //        Console.WriteLine("1. Reset Stats");
-            //        Console.WriteLine("2. Main Menu");
-            //        Console.Write("\nEnter Selection: ");
-
-            //        try
-            //        {
-            //            input = Convert.ToInt32(Console.ReadLine());
-            //            switch (input)
-            //            {
-            //                case 1:
-            //                    //Reset stats
-            //                    ResetStats();
-            //                    DisplayStats(false);
-            //                    break;
-            //                case 2:
-            //                    DisplayMenu();
-            //                    break;
-            //                default:
-            //                    Console.WriteLine("Not a valid input. Press enter to try again");
-            //                    Console.ReadLine();
-            //                    break;
-            //            }
-            //        }
-            //        catch
-            //        {
-            //            Console.WriteLine("Not a valid input. Press enter to try again"); //REMOVE THIS BLOCK? IN OTHER INSTANCES AS WELL?
-            //            Console.ReadLine();
-            //        }
-            //}
         }
 
         private static void StatsPreGameMenu()
         {
+            DisplayStats(false);
             int input = 0;
 
             while (input != 2)
@@ -709,11 +583,8 @@ namespace PetlachBPASS1
                             //Reset stats
                             ResetStats();
                             DisplayStats(false);
-                            //tatsPreGameMenu();
                             break;
                         case 2:
-                            //DisplayMenu();
-                            //input = 2;
                             break;
                         default:
                             Console.WriteLine("Not a valid input. Press enter to try again");
@@ -724,15 +595,19 @@ namespace PetlachBPASS1
                 catch
                 {
                     Console.WriteLine("Not a valid input. Press enter to try again"); //REMOVE THIS BLOCK? IN OTHER INSTANCES AS WELL?
-                    Console.ReadLine();
+                    Console.Clear();
                 }
             }
         }
 
         private static void StatsPostGameMenu()
         {
+            DisplayStats(true);
             int input = 0;
-            while (input != 3)
+
+            bool exit = false;
+
+            while (input != 3 && !exit)
             {
                 Console.WriteLine("1. Play Again");
                 Console.WriteLine("2. Reset Stats");
@@ -746,7 +621,8 @@ namespace PetlachBPASS1
                     {
                         case 1:
                             //Play
-                            PlayGame();
+                            SetUpGame();
+                            exit = true;
                             break;
                         case 2:
                             //Reset stats
@@ -754,9 +630,6 @@ namespace PetlachBPASS1
                             DisplayStats(true);
                             break;
                         case 3:
-                            //Stats
-                            //input = 3;
-                            //Console.WriteLine("I am 3!");
                             break;
                         default:
                             Console.WriteLine("Not a valid input. Press enter to try again");
