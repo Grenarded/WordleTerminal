@@ -1,4 +1,11 @@
-﻿using System;
+﻿//Author: Ben Petlach
+//File Name: Program.cs
+//Project Name: PetlachBPass1
+//Creation Date: Feb. 15, 2023
+//Modified Date: Feb. 22, 2023
+//Description: Wordle recreation: guess the 5-letter word in 6 guesses or less
+
+using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
@@ -63,7 +70,7 @@ namespace PetlachBPASS1
                 {
                     wordList.Add(inFile.ReadLine());
                 }
-                inFile.Close();
+                //inFile.Close();
             }
             catch(FileNotFoundException fnf)
             {
@@ -77,6 +84,13 @@ namespace PetlachBPASS1
             {
                 Console.WriteLine(e.Message);
             }
+            finally
+            {
+                if (inFile != null)
+                {
+                    inFile.Close();
+                }
+            }
         }
 
         private static void DisplayMenu()
@@ -86,13 +100,13 @@ namespace PetlachBPASS1
             while (true)
             {
                 Console.Clear();
-                Console.WriteLine("Welcome to WORDLE!\n");
-                Console.WriteLine("1. Play");
-                Console.WriteLine("2. Instructions");
-                Console.WriteLine("3. Stats");
-                Console.WriteLine("4. Settings");
-                Console.WriteLine("5. Exit\n");
-                Console.Write("Enter selection: ");
+                Console.WriteLine(String.Format("{0," + ((Console.WindowWidth / 2) + ("Welcome to WORDLE!".Length / 2)) + "}", "Welcome to WORDLE!\n"));
+                Console.WriteLine(String.Format("{0," + ((Console.WindowWidth / 2) + ("Welcome to WORDLE!".Length / 2)) + "}", "1. Play           "));
+                Console.WriteLine(String.Format("{0," + ((Console.WindowWidth / 2) + ("Welcome to WORDLE!".Length / 2)) + "}", "2. Instructions   "));
+                Console.WriteLine(String.Format("{0," + ((Console.WindowWidth / 2) + ("Welcome to WORDLE!".Length / 2)) + "}", "3. Stats          "));
+                Console.WriteLine(String.Format("{0," + ((Console.WindowWidth / 2) + ("4. Settings".Length / 2)) + "}", "4. Settings"));
+                Console.WriteLine(String.Format("{0," + ((Console.WindowWidth / 2) + ("5. Exit".Length / 2)) + "}", "5. Exit           \n"));
+                Console.Write(String.Format("{0," + ((Console.WindowWidth / 2) + ("Welcome to WORDLE!".Length / 2)) + "}", "Enter selection: "));
 
                 try
                 {
@@ -173,8 +187,6 @@ namespace PetlachBPASS1
         private static void DrawGame()
         {
             Console.Clear();
-
-            Console.WriteLine(answer);
 
             //Display alphabet
             for (int i = 0; i < alpha.Length; i++)
@@ -561,7 +573,7 @@ namespace PetlachBPASS1
                     Console.WriteLine("1. Play Again");
                     Console.WriteLine("2. Reset Stats");
                     Console.WriteLine("3. Main Menu");
-                    Console.WriteLine("\nEnter Selection: ");
+                    Console.Write("\nEnter Selection: ");
 
                     try
                     {
@@ -598,7 +610,7 @@ namespace PetlachBPASS1
                 {
                     Console.WriteLine("1. Reset Stats");
                     Console.WriteLine("2. Main Menu");
-                    Console.WriteLine("\nEnter Selection: ");
+                    Console.Write("\nEnter Selection: ");
 
                     try
                     {
@@ -645,7 +657,7 @@ namespace PetlachBPASS1
 
                 outFile.Write(currentStreak + " " + maxStreak);
 
-                outFile.Close();
+                //outFile.Close();
             }
             catch (FileLoadException fl)
             {
@@ -658,6 +670,13 @@ namespace PetlachBPASS1
             catch(Exception e)
             {
                 Console.WriteLine("SaveStats: " + e.Message);
+            }
+            finally
+            {
+                if (outFile != null)
+                {
+                    outFile.Close();
+                }
             }
         }
 
@@ -678,7 +697,7 @@ namespace PetlachBPASS1
                 currentStreak = Convert.ToInt32(inFile.ReadLine().Split(' ')[0]);
                 maxStreak = Convert.ToInt32(inFile.ReadLine().Split(' ')[1]);
 
-                inFile.Close();
+                //inFile.Close();
             }
             catch(FileNotFoundException)
             {
@@ -690,6 +709,13 @@ namespace PetlachBPASS1
             catch(Exception e)
             {
                 Console.WriteLine("Load stats: " + e.Message);
+            }
+            finally
+            {
+                if (inFile != null)
+                {
+                    inFile.Close();
+                }
             }
         }
 
