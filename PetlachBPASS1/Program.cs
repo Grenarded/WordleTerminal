@@ -2,7 +2,7 @@
 //File Name: Program.cs
 //Project Name: PetlachBPass1
 //Creation Date: Feb. 15, 2023
-//Modified Date: Feb. 22, 2023
+//Modified Date: Feb. 23, 2023
 //Description: Wordle recreation: guess the 5-letter word in 6 guesses or less
 
 using System;
@@ -123,7 +123,7 @@ namespace PetlachBPASS1
                             break;
                         default:
                             //Response if user didn't enter valid input
-                            Console.WriteLine("Not a valid input. Press enter to try again");
+                            Console.WriteLine("Not a valid input. Press <enter> or <return> to try again");
                             Console.ReadLine();
                             break;
                     }
@@ -131,7 +131,7 @@ namespace PetlachBPASS1
                 catch
                 {
                     //Response if user didn't enter valid input
-                    Console.WriteLine("Not a valid input. Press enter to try again");
+                    Console.WriteLine("Not a valid input. Press <enter> or <return> to try again");
                     Console.ReadLine();
                 }
             }
@@ -148,7 +148,7 @@ namespace PetlachBPASS1
             Console.WriteLine("How To Play");
             Console.WriteLine("-----------");
             Console.WriteLine("\nGuess the word in 6 tries\n");
-            Console.WriteLine("-Each guess must be a valid 5-letter word");
+            Console.WriteLine("-Each guess must be a real, valid 5-letter word");
             Console.WriteLine("\n-The colour of the tiles will change to show how close your guess was to the word");
 
             Console.Write("\t-Letters in the correct spot will be ");
@@ -163,9 +163,11 @@ namespace PetlachBPASS1
             Console.BackgroundColor = ConsoleColor.DarkGray;
             Console.WriteLine("GRAY");
             Console.ResetColor();
-            Console.WriteLine("\n-Keep an eye on the alphabet at the top of your game screen,\nit will help you keep track of each letter");
+            Console.WriteLine("\n-Keep an eye on the alphabet at the top of your game screen, it will help you keep track of each letter");
+            Console.WriteLine("\n-Remember, there can be repeat letters! If a letter is repeated twice, the same colour coding will apply.");
+            Console.WriteLine("-Hint: If the answer has two letters but all your guesses only have that letter once, it may appear that you are missing a letter or ran out of options. Keep this in mind!");
 
-            Console.WriteLine("\nPress enter to return to main menu");
+            Console.WriteLine("\nPress <enter> or <return> to return to main menu");
             Console.ReadLine();
         }
 
@@ -505,7 +507,7 @@ namespace PetlachBPASS1
             }
             else
             {
-                Console.WriteLine("Invalid word. Press <backspace> try again");
+                Console.WriteLine("Invalid word. Press <backspace> or <delete> try again");
                 HandleInput();
             }
         }
@@ -602,7 +604,7 @@ namespace PetlachBPASS1
             {
                 //Draw/update game board
                 DrawGame();
-                Console.WriteLine("Correct, good job! \nPress enter to continue");
+                Console.WriteLine("Correct, good job! \nPress <enter> or <return> to continue");
                 Console.ReadLine();
 
                 //Update stats
@@ -634,7 +636,7 @@ namespace PetlachBPASS1
                     DrawGame();
 
                     //Display the write answer and prompt to continue
-                    Console.WriteLine($"The answer was: {answer.ToUpper()} \nPress enter to continue");
+                    Console.WriteLine($"The answer was: {answer.ToUpper()} \nPress <enter> or <return> to continue");
                     Console.ReadLine();
 
                     //Update stats
@@ -663,8 +665,8 @@ namespace PetlachBPASS1
         //Desc: Display the stats and menu if user wants to see the stats before the game
         private static void StatsPreGameMenu()
         {
-            //Display the stats
-            DisplayStats(false);
+            ////Display the stats
+            //DisplayStats(false);
 
             //Define input and set default value
             int input = 0;
@@ -672,6 +674,9 @@ namespace PetlachBPASS1
             //Loop while 2 (exit value) isn't pressed
             while (input != 2)
             {
+                //Display the stats
+                DisplayStats(false);
+
                 Console.WriteLine("1. Reset Stats");
                 Console.WriteLine("2. Main Menu");
                 Console.Write("\nEnter Selection: ");
@@ -692,7 +697,7 @@ namespace PetlachBPASS1
                             break;
                         default:
                             //If a valid input wasn't entered
-                            Console.WriteLine("Not a valid input. Press enter to try again");
+                            Console.WriteLine("Not a valid input. Press <enter> or <return> to try again");
                             Console.ReadLine();
                             break;
                     }
@@ -700,8 +705,8 @@ namespace PetlachBPASS1
                 catch
                 {
                     //If a valid input wasn't entered
-                    Console.WriteLine("Not a valid input. Press enter to try again");
-                    Console.Clear();
+                    Console.WriteLine("Not a valid input. Press <enter> or <return> to try again");
+                    Console.ReadLine();
                 }
             }
         }
@@ -711,15 +716,15 @@ namespace PetlachBPASS1
         //Desc: Display the stats and menu after the game is played
         private static void StatsPostGameMenu()
         {
-            //Display the stats
-            DisplayStats(true);
-
             //Define input and set default value
             int input = 0;
 
             //Loop through while loop doesn't need to be exited or the exit key (3) isn't pressed
             while (input != 3 && input != 1)
             {
+                //Display the stats
+                DisplayStats(true);
+
                 //Menu prompts
                 Console.WriteLine("1. Play Again");
                 Console.WriteLine("2. Reset Stats");
@@ -748,7 +753,7 @@ namespace PetlachBPASS1
                             break;
                         default:
                             //If a valid input wasn't entered
-                            Console.WriteLine("Not a valid input. Press enter to try again");
+                            Console.WriteLine("Not a valid input. Press <enter> or <return> to try again");
                             Console.ReadLine();
                             break;
                     }
@@ -756,7 +761,7 @@ namespace PetlachBPASS1
                 catch
                 {
                     //If a valid input wasn't entered
-                    Console.WriteLine("Not a valid input. Press enter to try again");
+                    Console.WriteLine("Not a valid input. Press <enter> or <return> to try again");
                     Console.ReadLine();
                 }
             }
