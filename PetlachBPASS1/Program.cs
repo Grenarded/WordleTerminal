@@ -88,14 +88,23 @@ namespace PetlachBPASS1
             //Loop through menu options while program hasn't been closed (when the 5 key is pressed)
             while (input != 4)
             {
+                string centeredText = "Welcome to Wordle";
+
                 //Menu prompts
                 Console.Clear();
-                Console.WriteLine("Welcome to WORDLE!\n");
-                Console.WriteLine("1. Play");
-                Console.WriteLine("2. Instructions");
-                Console.WriteLine("3. Stats");
-                Console.WriteLine("4. Exit\n");
-                Console.Write("Enter selection: ");
+                Console.WriteLine(CenterString("Welcome to WORDLE!\n", ""));
+                //Console.WriteLine("Welcome to WORDLE!\n");
+                Console.WriteLine(CenterString("1. Play", centeredText));
+                //Console.WriteLine("1. Play");
+                Console.WriteLine(CenterString("2. Instructions", centeredText));
+                //Console.WriteLine("2. Instructions");
+                Console.WriteLine(CenterString("3. Stats ", centeredText));
+                //Console.WriteLine("3. Stats");
+                Console.WriteLine(CenterString("4. Exit", centeredText));
+                //Console.WriteLine("4. Exit\n");
+                Console.WriteLine();
+                Console.Write(CenterString("Enter selection: ", centeredText));
+                //Console.Write("Enter selection: ");
 
                 try
                 {
@@ -145,9 +154,11 @@ namespace PetlachBPASS1
             Console.Clear();
 
             //Display instructions
-            Console.WriteLine("How To Play");
-            Console.WriteLine("-----------");
-            Console.WriteLine("\nGuess the word in 6 tries\n");
+            Console.WriteLine(CenterString("How to Play", ""));
+            Console.WriteLine(CenterString("-----------", ""));
+            Console.WriteLine();
+            Console.WriteLine(CenterString("Guess the word in 6 tries", ""));
+            Console.WriteLine();
             Console.WriteLine("-Each guess must be a real, valid 5-letter word");
             Console.WriteLine("\n-The colour of the tiles will change to show how close your guess was to the word");
 
@@ -326,7 +337,7 @@ namespace PetlachBPASS1
         {
             Console.Clear();
 
-            //Console.WriteLine(answer);
+            Console.Write(CenterString("", "".PadLeft(alpha.Length * 2)));
 
             //Display alphabet with appropriate colour coding
             for (int i = 0; i < alpha.Length; i++)
@@ -354,12 +365,17 @@ namespace PetlachBPASS1
                 Console.Write(" ");
             }
 
-            Console.WriteLine();
+            Console.WriteLine("\n");
+
+            Console.WriteLine(CenterString("---------------------", ""));
 
             //Draw the grid and letters with the appropriate colour coding
-            Console.WriteLine("---------------------");
             for (int row = 0; row < NUM_ROWS; row++)
             {
+                //Center the grid rows
+                Console.Write(CenterString(" ", "----------------------"));
+
+                //Draw each column w/ the appropriate colour coding
                 for (int col = 0; col < NUM_COLS; col++)
                 {
                     Console.Write("|");
@@ -383,7 +399,7 @@ namespace PetlachBPASS1
                     Console.ResetColor();
                 }
                 Console.Write("|\n");
-                Console.WriteLine("---------------------");
+                Console.WriteLine(CenterString("---------------------", ""));
             }
         }
 
@@ -432,7 +448,7 @@ namespace PetlachBPASS1
                     //If the final column does not have a letter
                     else
                     {
-                        Console.WriteLine("Not enough letters");
+                        Console.WriteLine(CenterString("Not enough letters", ""));
                         //Stop cursor from moving downwards
                         Console.SetCursorPosition(Console.CursorLeft, Console.CursorTop - 1);
                     }
@@ -507,7 +523,7 @@ namespace PetlachBPASS1
             }
             else
             {
-                Console.WriteLine("Invalid word. Press <backspace> or <delete> try again");
+                Console.WriteLine(CenterString("Invalid word. Press <backspace> or <delete> try again",""));
                 HandleInput();
             }
         }
@@ -604,7 +620,9 @@ namespace PetlachBPASS1
             {
                 //Draw/update game board
                 DrawGame();
-                Console.WriteLine("Correct, good job! \nPress <enter> or <return> to continue");
+                Console.WriteLine();
+                Console.WriteLine(CenterString("Correct, good job!",""));
+                Console.WriteLine(CenterString("Press <enter> or <return> to continue", ""));
                 Console.ReadLine();
 
                 //Update stats
@@ -636,7 +654,9 @@ namespace PetlachBPASS1
                     DrawGame();
 
                     //Display the write answer and prompt to continue
-                    Console.WriteLine($"The answer was: {answer.ToUpper()} \nPress <enter> or <return> to continue");
+                    Console.WriteLine();
+                    Console.WriteLine(CenterString($"The answer was: {answer.ToUpper()}",""));
+                    Console.WriteLine(CenterString("Press < enter > or <return> to continue", ""));
                     Console.ReadLine();
 
                     //Update stats
@@ -658,6 +678,24 @@ namespace PetlachBPASS1
             Console.Write(new string(' ', Console.WindowWidth));
 
             Console.SetCursorPosition(0, Console.CursorTop - 1);
+        }
+
+        //Pre: text to center as a string, text to horizontally align with
+        //Post: text with appropriate padding to center it
+        //Desc: Centers given text on the screen, either directly in the center or horizontally aligned with the specified text
+        private static string CenterString(string text, string longestText)
+        {
+            int screenWidth = Console.WindowWidth;
+            int stringWidth = text.Length;
+            int longStringWidth = longestText.Length;
+            int spaces = (screenWidth / 2) + (stringWidth / 2) - (longStringWidth / 2);
+
+            if (longestText != "")
+            {
+                spaces += (stringWidth / 2);
+            }
+
+            return text.PadLeft(spaces);
         }
 
         //Pre: None
