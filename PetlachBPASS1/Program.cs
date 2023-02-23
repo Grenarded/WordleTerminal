@@ -58,6 +58,9 @@ namespace PetlachBPASS1
         static int currentStreak;
         static int maxStreak;
 
+        //Check if game is being played
+        static bool playGame = false;
+
         public static void Main(string[] args)
         {
             //Load dictionaries and save words
@@ -104,6 +107,7 @@ namespace PetlachBPASS1
                     {
                         case 1:
                             //Play
+                            playGame = true;
                             SetUpGame();
                             break;
                         case 2:
@@ -280,34 +284,37 @@ namespace PetlachBPASS1
         //Desc: Reset values and call appropriate methods to get the game set up
         private static void SetUpGame()
         {
-            //Generate answer for the round
-            answer = answerWords[rng.Next(0, answerWords.Count)];
-
-            //Default column and row position for play time
-            curCol = 0;
-            curRow = 0;
-
-            //Fill board array w/ empty chars and reset correctness
-            for (int i = 0; i < NUM_ROWS; i++)
+            while (playGame)
             {
-                for (int j = 0; j < NUM_COLS; j++)
+                //Generate answer for the round
+                answer = answerWords[rng.Next(0, answerWords.Count)];
+
+                //Default column and row position for play time
+                curCol = 0;
+                curRow = 0;
+
+                //Fill board array w/ empty chars and reset correctness
+                for (int i = 0; i < NUM_ROWS; i++)
                 {
-                    guessBoard[i, j] = ' ';
-                    correctness[i, j] = 0;
+                    for (int j = 0; j < NUM_COLS; j++)
+                    {
+                        guessBoard[i, j] = ' ';
+                        correctness[i, j] = 0;
+                    }
                 }
+
+                //Reset correctness of the alphabet
+                for (int i = 0; i < alphaStatus.Length; i++)
+                {
+                    alphaStatus[i] = 0;
+                }
+
+                DrawGame();
+
+                HandleInput();
+
+                StatsPostGameMenu();
             }
-
-            //Reset correctness of the alphabet
-            for (int i = 0; i < alphaStatus.Length; i++)
-            {
-                alphaStatus[i] = 0;
-            }
-
-            DrawGame();
-
-            HandleInput();
-
-            StatsPostGameMenu();
         }
 
         //Pre: None
@@ -498,7 +505,7 @@ namespace PetlachBPASS1
             }
             else
             {
-                Console.WriteLine("Invalid word. Please try again");
+                Console.WriteLine("Invalid word. Press <backspace> try again");
                 HandleInput();
             }
         }
@@ -710,11 +717,8 @@ namespace PetlachBPASS1
             //Define input and set default value
             int input = 0;
 
-            //Store loop status- if it needs to be exited or not
-            bool exit = false;
-
             //Loop through while loop doesn't need to be exited or the exit key (3) isn't pressed
-            while (input != 3 && !exit)
+            while (input != 3 && input != 1)
             {
                 //Menu prompts
                 Console.WriteLine("1. Play Again");
@@ -731,10 +735,7 @@ namespace PetlachBPASS1
                     switch (input)
                     {
                         case 1:
-                            //Play
-                            SetUpGame();
-                            //Change so that the loop ends on the next repeat
-                            exit = true;
+                            //Break the loop and go back to the SetUpGame loop
                             break;
                         case 2:
                             //Reset stats
@@ -742,6 +743,8 @@ namespace PetlachBPASS1
                             DisplayStats(true);
                             break;
                         case 3:
+                            //Stop the SetUpGame loop to return back to main menu
+                            playGame = false;
                             break;
                         default:
                             //If a valid input wasn't entered

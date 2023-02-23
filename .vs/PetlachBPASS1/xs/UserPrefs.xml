@@ -1,28 +1,14 @@
 ﻿<Properties StartupConfiguration="{1B97C3C1-0D13-4239-9C58-9D58F76EB6EC}|Default">
   <MonoDevelop.Ide.Workbench ActiveDocument="PetlachBPASS1/Program.cs">
     <Files>
-      <File FileName="PetlachBPASS1/Program.cs" Line="753" Column="29" />
+      <File FileName="PetlachBPASS1/Program.cs" Line="493" Column="1" />
     </Files>
-    <Pads>
-      <Pad Id="ProjectPad">
-        <State name="__root__">
-          <Node name="PetlachBPASS1" expanded="True">
-            <Node name="PetlachBPASS1" expanded="True">
-              <Node name="Program.cs" selected="True" />
-            </Node>
-          </Node>
-        </State>
-      </Pad>
-    </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.ItemProperties.PetlachBPASS1 PreferredExecutionTarget="MonoDevelop.Default" />
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|anycpu" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore>
-      <Breakpoint file="/Users/benpetlach/Desktop/School/ICS4/Assignments/PASS1/PetlachBPASS1/PetlachBPASS1/Program.cs" relfile="PetlachBPASS1/Program.cs" line="639" column="1" />
-      <Breakpoint file="/Users/benpetlach/Desktop/School/ICS4/Assignments/PASS1/PetlachBPASS1/PetlachBPASS1/Program.cs" relfile="PetlachBPASS1/Program.cs" line="644" column="1" />
-    </BreakpointStore>
+    <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MultiItemStartupConfigurations />
 </Properties>
