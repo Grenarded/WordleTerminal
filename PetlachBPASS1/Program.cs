@@ -93,18 +93,12 @@ namespace PetlachBPASS1
                 //Menu prompts
                 Console.Clear();
                 Console.WriteLine(CenterString("Welcome to WORDLE!\n", ""));
-                //Console.WriteLine("Welcome to WORDLE!\n");
                 Console.WriteLine(CenterString("1. Play", centeredText));
-                //Console.WriteLine("1. Play");
                 Console.WriteLine(CenterString("2. Instructions", centeredText));
-                //Console.WriteLine("2. Instructions");
                 Console.WriteLine(CenterString("3. Stats ", centeredText));
-                //Console.WriteLine("3. Stats");
                 Console.WriteLine(CenterString("4. Exit", centeredText));
-                //Console.WriteLine("4. Exit\n");
                 Console.WriteLine();
                 Console.Write(CenterString("Enter selection: ", centeredText));
-                //Console.Write("Enter selection: ");
 
                 try
                 {
@@ -132,7 +126,10 @@ namespace PetlachBPASS1
                             break;
                         default:
                             //Response if user didn't enter valid input
-                            Console.WriteLine("Not a valid input. Press <enter> or <return> to try again");
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine();
+                            Console.WriteLine(CenterString("Not a valid input. Press <enter> or <return> to try again",""));
+                            Console.ResetColor();
                             Console.ReadLine();
                             break;
                     }
@@ -140,7 +137,10 @@ namespace PetlachBPASS1
                 catch
                 {
                     //Response if user didn't enter valid input
-                    Console.WriteLine("Not a valid input. Press <enter> or <return> to try again");
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine();
+                    Console.WriteLine(CenterString("Not a valid input. Press <enter> or <return> to try again", ""));
+                    Console.ResetColor();
                     Console.ReadLine();
                 }
             }
@@ -189,6 +189,8 @@ namespace PetlachBPASS1
         {
             Console.Clear();
 
+            string centeredText = "Statistics";
+
             //Check if the current streak is greater than the max streak
             if (currentStreak > maxStreak)
             {
@@ -196,13 +198,14 @@ namespace PetlachBPASS1
                 maxStreak = currentStreak;
             }
 
-            Console.WriteLine("Statistics");
-            Console.WriteLine("----------\n");
+            Console.WriteLine(CenterString("Statistics",""));
+            Console.WriteLine(CenterString("----------",""));
+            Console.WriteLine();
 
             //Display stats
-            Console.WriteLine("Games Played: " + gamesPlayed);
+            Console.WriteLine(CenterString("Games Played: " + gamesPlayed, centeredText));
 
-            Console.Write("Win Percentage: ");
+            Console.Write(CenterString("Win Percentage:  ", centeredText));
             //Check if there were 0 games played
             if (gamesPlayed == 0)
             {
@@ -214,11 +217,13 @@ namespace PetlachBPASS1
                 Console.WriteLine(Math.Round((guessDistrib.Count / gamesPlayed) * 100, 2) + "%");
             }
 
-            Console.WriteLine("Current Streak: " + currentStreak);
-            Console.WriteLine("Max Streak: " + maxStreak);
+            Console.WriteLine(CenterString("Current Streak: " + currentStreak,centeredText));
+            Console.WriteLine(CenterString("Max Streak: " + maxStreak, centeredText));
 
             //Display guess distribution
-            Console.WriteLine("\nGuess Distribution:\n");
+            Console.WriteLine();
+            Console.WriteLine(CenterString("Guess Distribution:", centeredText));
+            Console.WriteLine();
 
             //Loop through each row value
             for (int i = 0; i <= NUM_COLS; i++)
@@ -337,6 +342,9 @@ namespace PetlachBPASS1
         {
             Console.Clear();
 
+            //Console.WriteLine(answer);
+
+            //Center the alphabet
             Console.Write(CenterString("", "".PadLeft(alpha.Length * 2)));
 
             //Display alphabet with appropriate colour coding
@@ -448,7 +456,10 @@ namespace PetlachBPASS1
                     //If the final column does not have a letter
                     else
                     {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine();
                         Console.WriteLine(CenterString("Not enough letters", ""));
+                        Console.ResetColor();
                         //Stop cursor from moving downwards
                         Console.SetCursorPosition(Console.CursorLeft, Console.CursorTop - 1);
                     }
@@ -523,7 +534,10 @@ namespace PetlachBPASS1
             }
             else
             {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine();
                 Console.WriteLine(CenterString("Invalid word. Press <backspace> or <delete> try again",""));
+                Console.ResetColor();
                 HandleInput();
             }
         }
@@ -703,11 +717,10 @@ namespace PetlachBPASS1
         //Desc: Display the stats and menu if user wants to see the stats before the game
         private static void StatsPreGameMenu()
         {
-            ////Display the stats
-            //DisplayStats(false);
-
             //Define input and set default value
             int input = 0;
+
+            string centeredText = "Statistics";
 
             //Loop while 2 (exit value) isn't pressed
             while (input != 2)
@@ -715,9 +728,10 @@ namespace PetlachBPASS1
                 //Display the stats
                 DisplayStats(false);
 
-                Console.WriteLine("1. Reset Stats");
-                Console.WriteLine("2. Main Menu");
-                Console.Write("\nEnter Selection: ");
+                Console.WriteLine(CenterString("1. Reset Stats", centeredText));
+                Console.WriteLine(CenterString("2. Main Menu", centeredText));
+                Console.WriteLine();
+                Console.Write(CenterString("Enter Selection: ", centeredText));
 
                 try
                 {
@@ -735,7 +749,10 @@ namespace PetlachBPASS1
                             break;
                         default:
                             //If a valid input wasn't entered
-                            Console.WriteLine("Not a valid input. Press <enter> or <return> to try again");
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine();
+                            Console.WriteLine(CenterString("Not a valid input. Press <enter> or <return> to try again", ""));
+                            Console.ResetColor();
                             Console.ReadLine();
                             break;
                     }
@@ -743,7 +760,10 @@ namespace PetlachBPASS1
                 catch
                 {
                     //If a valid input wasn't entered
-                    Console.WriteLine("Not a valid input. Press <enter> or <return> to try again");
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine();
+                    Console.WriteLine(CenterString("Not a valid input. Press <enter> or <return> to try again", ""));
+                    Console.ResetColor();
                     Console.ReadLine();
                 }
             }
@@ -757,6 +777,8 @@ namespace PetlachBPASS1
             //Define input and set default value
             int input = 0;
 
+            string centeredText = "Statistics";
+
             //Loop through while loop doesn't need to be exited or the exit key (3) isn't pressed
             while (input != 3 && input != 1)
             {
@@ -764,10 +786,11 @@ namespace PetlachBPASS1
                 DisplayStats(true);
 
                 //Menu prompts
-                Console.WriteLine("1. Play Again");
-                Console.WriteLine("2. Reset Stats");
-                Console.WriteLine("3. Main Menu");
-                Console.Write("\nEnter Selection: ");
+                Console.WriteLine(CenterString("1. Play Again", centeredText));
+                Console.WriteLine(CenterString("2. Reset Stats ", centeredText));
+                Console.WriteLine(CenterString("3. Main Menu ", centeredText));
+                Console.WriteLine();
+                Console.Write(CenterString("Enter Selection: ", centeredText));
 
                 try
                 {
@@ -791,7 +814,10 @@ namespace PetlachBPASS1
                             break;
                         default:
                             //If a valid input wasn't entered
-                            Console.WriteLine("Not a valid input. Press <enter> or <return> to try again");
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine();
+                            Console.WriteLine(CenterString("Not a valid input. Press <enter> or <return> to try again",""));
+                            Console.ResetColor();
                             Console.ReadLine();
                             break;
                     }
@@ -799,7 +825,10 @@ namespace PetlachBPASS1
                 catch
                 {
                     //If a valid input wasn't entered
-                    Console.WriteLine("Not a valid input. Press <enter> or <return> to try again");
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine();
+                    Console.WriteLine(CenterString("Not a valid input. Press <enter> or <return> to try again",""));
+                    Console.ResetColor();
                     Console.ReadLine();
                 }
             }
